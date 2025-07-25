@@ -1,0 +1,92 @@
+<style>
+  body {
+    margin: 0;
+    background: #0f0f0f;
+    height: 100vh;
+    overflow: hidden;
+    cursor: none;
+  }
+
+  .trail-dot, .trail-dot2 {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.8;
+    filter: blur(4px);
+    transform: translate(-50%, -50%);
+  }
+
+  .trail-dot {
+    background: radial-gradient(circle, #e404d1, transparent 60%);
+  }
+
+  .trail-dot2 {
+    background: radial-gradient(circle, #00eeff, transparent 40%);
+  }
+</style>
+
+<body>
+  <script>
+    const trailLength = 100;
+    const trail1 = [];
+    const trail2 = [];
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+
+    // Create first trail (pink)
+    for (let i = 0; i < trailLength; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'trail-dot';
+      document.body.appendChild(dot);
+      trail1.push({ x: 0, y: 0, el: dot });
+    }
+
+    // Create second trail (blue)
+    for (let i = 0; i < trailLength; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'trail-dot2';
+      document.body.appendChild(dot);
+      trail2.push({ x: 0, y: 0, el: dot });
+    }
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function animate() {
+      // First trail follows cursor (faster)
+      trail1[0].x += (mouseX - trail1[0].x) * 0.8;
+      trail1[0].y += (mouseY - trail1[0].y) * 0.8;
+      trail1[0].el.style.left = trail1[0].x + 'px';
+      trail1[0].el.style.top = trail1[0].y + 'px';
+
+      for (let i = 1; i < trail1.length; i++) {
+        trail1[i].x += (trail1[i - 1].x - trail1[i].x) * 0.7;
+        trail1[i].y += (trail1[i - 1].y - trail1[i].y) * 0.7;
+        trail1[i].el.style.left = trail1[i].x + 'px';
+        trail1[i].el.style.top = trail1[i].y + 'px';
+      }
+
+      // Second trail follows cursor (slower or offset for effect)
+      trail2[0].x += (mouseX - trail2[0].x) * 0.75;
+      trail2[0].y += (mouseY - trail2[0].y) * 0.75;
+      trail2[0].el.style.left = trail2[0].x + 'px';
+      trail2[0].el.style.top = trail2[0].y + 'px';
+
+      for (let i = 1; i < trail2.length; i++) {
+        trail2[i].x += (trail2[i - 1].x - trail2[i].x) * 0.65;
+        trail2[i].y += (trail2[i - 1].y - trail2[i].y) * 0.65;
+        trail2[i].el.style.left = trail2[i].x + 'px';
+        trail2[i].el.style.top = trail2[i].y + 'px';
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
